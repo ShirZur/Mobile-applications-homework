@@ -1,10 +1,11 @@
 package com.example.hw1;
 
 import android.content.Context;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -25,7 +26,6 @@ public class GameManager {
     private final int NUM_OF_ROWS = 8;
     private ArrayList<ShapeableImageView> arrOfBirds;
     private LinearLayout panel_lanes;
-    private LinearLayout.LayoutParams linearlayoutParam = null;
     private ArrayList<LinearLayout> arrOfLayout;
     private ImageView[][] matOfEagle;
     private boolean[][] isVisible;
@@ -40,12 +40,13 @@ public class GameManager {
     private Random random = new Random();
 
 
-    public GameManager(Context context, int life, MainActivity mainActivity, int timeToAddEagle){
+    public GameManager(Context context, int life, MainActivity mainActivity, int timeToAddEagle, Toast toast, Vibrator vibrator){
         arrOfBirds = new ArrayList<>(NUM_OF_LANES);
-        arrOfLayout = new ArrayList(NUM_OF_LANES);
+        arrOfLayout = new ArrayList<>(NUM_OF_LANES);
         this.toast = toast;
         this.life = life;
         this.vibrator = vibrator;
+        Log.d("abcd","shy");
         this.timeToAddEagle = timeToAddEagle;
         matOfEagle = new ImageView[8][3];
         isVisible = new boolean[8][3];
@@ -127,8 +128,6 @@ public class GameManager {
 
     public void insertImageView(){
         for(int i =0;i<NUM_OF_LANES;i++){
-            LinearLayout.LayoutParams lp = new   LinearLayout.LayoutParams
-                    (LinearLayout.LayoutParams.MATCH_PARENT,   0,1);
             ShapeableImageView bird = new ShapeableImageView(context);
             bird.setId(i + 1);
             bird.setImageResource(R.drawable.bird2);
@@ -140,11 +139,11 @@ public class GameManager {
             linearLayout1.setGravity(Gravity.BOTTOM);
             linearLayout1.setOrientation(LinearLayout.VERTICAL);
             linearLayout1.setId(View.generateViewId());
-            linearlayoutParam = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT,1);
             insertEagle(i,linearLayout1);
             arrOfLayout.add(linearLayout1);
-            arrOfLayout.get(i).addView(bird, lp);
-            panel_lanes.addView(linearLayout1, linearlayoutParam);
+            arrOfLayout.get(i).addView(bird, new   LinearLayout.LayoutParams
+                    (LinearLayout.LayoutParams.MATCH_PARENT,   0,1));
+            panel_lanes.addView(linearLayout1, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT,1));
         }
     }
 
@@ -186,6 +185,8 @@ public class GameManager {
         if(isVisible[NUM_OF_ROWS - 1][curPos]){
             wrong++;
             mainActivity.refreshUILifes();
+            toast.show();
+            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
         }
     }
 }

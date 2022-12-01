@@ -43,14 +43,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ActionBar actionBar;
-        actionBar = getSupportActionBar();
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#C1EBFD"));
-        actionBar.setBackgroundDrawable(colorDrawable);
         toast = Toast.makeText(this, "Boom!", Toast.LENGTH_LONG);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         context = this;
-        game = new GameManager(context, 3, this,  2);
+        game = new GameManager(context, 3, this,  2,toast,vibrator);
         timer = new Timer();
         startGame();
 
@@ -98,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateTimerUI() {
-        timer = new Timer();
         timer.scheduleAtFixedRate(
                 new TimerTask() {
                     @Override
@@ -118,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
     public void refreshUILifes() {
         if (game.getWrong() != 0 && !(game.getWrong() > game.getLife()))
             game_IMG_hearts[game_IMG_hearts.length - game.getWrong()].setVisibility(View.INVISIBLE);
-        toast.show();
-        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
         //we defined the API to be 26+
     }
 
@@ -137,5 +130,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        timer.cancel();
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        updateTimerUI();
+    }
 }
